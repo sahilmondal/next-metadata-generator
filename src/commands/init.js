@@ -21,6 +21,14 @@ async function init() {
       return;
     }
 
+    // Detect TypeScript
+    const isTypeScript = fileManager.isTypeScriptProject();
+    console.log(
+      chalk.blue(
+        `Detected ${isTypeScript ? "TypeScript" : "JavaScript"} project.`
+      )
+    );
+
     // Get user inputs
     const answers = await inquirer.prompt([
       {
@@ -75,7 +83,9 @@ async function init() {
     console.log(chalk.blue("\nSetup complete! 🎉"));
     console.log(
       chalk.blue(
-        "You can now manage your Next.js metadata in the next-metadata.js file."
+        `You can now manage your Next.js metadata in the ${
+          isTypeScript ? "next-metadata.ts" : "next-metadata.js"
+        } file.`
       )
     );
   } catch (error) {

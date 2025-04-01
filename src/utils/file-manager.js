@@ -4,6 +4,7 @@ const chalk = require("chalk");
 const glob = require("glob");
 
 const TEMPLATE_DIR = path.resolve(__dirname, "../templates");
+const TEMPLATE_PATH = "next-metadata.template.js";
 const METADATA_FILENAME_JS = "next-metadata.js";
 const METADATA_FILENAME_TS = "next-metadata.ts";
 
@@ -67,10 +68,7 @@ function isTypeScriptProject() {
 function createMetadataFile(answers) {
   // Determine if we should use TypeScript
   const useTypeScript = isTypeScriptProject();
-  const templatePath = path.join(
-    TEMPLATE_DIR,
-    `${METADATA_FILENAME_JS}.template`
-  );
+  const templatePath = path.join(TEMPLATE_DIR, `${TEMPLATE_PATH}`);
   const metadataFilename = useTypeScript
     ? METADATA_FILENAME_TS
     : METADATA_FILENAME_JS;
@@ -88,7 +86,7 @@ function createMetadataFile(answers) {
   // Add TypeScript types if using TypeScript
   if (useTypeScript) {
     // Add type imports at the top of the file
-    const typeImports = `import type { Metadata } from 'next';\n\n`;
+    // const typeImports = `import type { Metadata } from 'next';\n\n`;
 
     // Add types to siteConfig
     template = template.replace(
@@ -133,13 +131,14 @@ interface SiteConfig {
 `;
 
     // Add the type declarations to the template
-    template = typeImports + siteConfigInterface + template;
+    // template = typeImports + siteConfigInterface + template;
+    template = siteConfigInterface + template;
 
     // Add Metadata type to the metadata object
-    template = template.replace(
-      "const metadata = {",
-      "const metadata: Metadata = {"
-    );
+    // template = template.replace(
+    //   "const metadata = {",
+    //   "const metadata: Metadata = {"
+    // );
   }
 
   // Write the file

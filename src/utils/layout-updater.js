@@ -21,13 +21,14 @@ function updateLayoutFile() {
   const isInSrcDir = layoutFilePath.includes(path.join("src", "app"));
 
   // Check if the project uses TypeScript
-  const useTypeScript = fileManager.isTypeScriptProject();
-  const metadataExtension = useTypeScript ? ".ts" : ".js";
+  //   const useTypeScript = fileManager.isTypeScriptProject();
+  //   const metadataExtension = useTypeScript ? ".ts" : ".js";
 
   // Determine the correct import path based on directory structure
-  const importPath = isInSrcDir
-    ? `../../next-metadata${metadataExtension}`
-    : `../next-metadata${metadataExtension}`;
+  //   const importPath = isInSrcDir
+  //     ? `../../next-metadata${metadataExtension}`
+  //     : `../next-metadata${metadataExtension}`;
+  const importPath = isInSrcDir ? `../../next-metadata` : `../next-metadata`;
 
   // Import statement to add - using nextMetadata as variable name to avoid conflicts
   const importStatement = `import nextMetadata from '${importPath}';\n`;
