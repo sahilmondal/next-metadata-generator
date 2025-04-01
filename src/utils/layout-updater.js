@@ -16,33 +16,28 @@ function updateLayoutFile() {
   const layoutFilePath = layoutFiles[0];
   const layoutContent = fs.readFileSync(layoutFilePath, "utf8");
 
-  // Check if the file is TypeScript or JavaScript
+  // Check if the file is TypeScript or JavaScript and in src directory
   const isTypeScript = layoutFilePath.endsWith(".tsx");
+  const isInSrcDir = layoutFilePath.includes(path.join("src", "app"));
 
-  // Import statement to add
-  const importStatement = `import metadata from '../../next-metadata';\n`;
+  // Determine the correct import path based on directory structure
+  const importPath = isInSrcDir ? "../../next-metadata" : "../next-metadata";
+
+  // Import statement to add - using nextMetadata as variable name to avoid conflicts
+  const importStatement = `import nextMetadata from '${importPath}';\n`;
 
   // Regular expressions to find and replace metadata
-  const metadataExportRegex = /export\s+const\s+metadata\s*=\s*{[\s\S]*?};/;
-  const metadataObjectRegex = /export\s+const\s+metadata/;
+  const metadataExportRegex =
+    /export\s+const\s+metadata(?:\s*:\s*Metadata)?\s*=\s*{[\s\S]*?};/;
 
   // Check if the layout file already has a metadata export
   if (metadataExportRegex.test(layoutContent)) {
-    // Replace existing metadata export with our import
+    // Replace existing metadata export with our import and simplified export
     const updatedContent = layoutContent.replace(
       metadataExportRegex,
-      "export const metadata = metadata;"
-    );
-
-    // Add the import statement
-    const finalContent = addImportToContent(updatedContent, importStatement);
-
-    fs.writeFileSync(layoutFilePath, finalContent);
-  } else if (metadataObjectRegex.test(layoutContent)) {
-    // If there's a simpler metadata declaration, replace it
-    const updatedContent = layoutContent.replace(
-      metadataObjectRegex,
-      "export const metadata"
+      isTypeScript
+        ? "export const metadata: Metadata = nextMetadata;"
+        : "export const metadata = nextMetadata;"
     );
 
     // Add the import statement
@@ -51,7 +46,10 @@ function updateLayoutFile() {
     fs.writeFileSync(layoutFilePath, finalContent);
   } else {
     // If no metadata export is found, add both import and export
-    const metadataExport = "export const metadata = metadata;\n\n";
+    const metadataExport = isTypeScript
+      ? "export const metadata: Metadata = nextMetadata;\n\n"
+      : "export const metadata = nextMetadata;\n\n";
+
     const finalContent = addImportToContent(
       layoutContent,
       importStatement + metadataExport

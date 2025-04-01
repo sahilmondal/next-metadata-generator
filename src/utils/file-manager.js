@@ -1,9 +1,11 @@
 const fs = require("fs-extra");
 const path = require("path");
 const chalk = require("chalk");
+const glob = require("glob");
 
 const TEMPLATE_DIR = path.resolve(__dirname, "../templates");
-const METADATA_FILENAME = "next-metadata.template";
+const METADATA_FILENAME_JS = "next-metadata.js";
+const METADATA_FILENAME_TS = "next-metadata.ts";
 
 /**
  * Check if the current directory is a Next.js project
@@ -26,11 +28,53 @@ function isNextJsProject() {
 }
 
 /**
- * Create the metadata configuration file
+ * Check if the project uses TypeScript
+ */
+function isTypeScriptProject() {
+  try {
+    // Check for tsconfig.json
+    const tsconfigPath = path.join(process.cwd(), "tsconfig.json");
+    if (fs.existsSync(tsconfigPath)) {
+      return true;
+    }
+
+    // Check for typescript dependency in package.json
+    const packageJsonPath = path.join(process.cwd(), "package.json");
+    if (fs.existsSync(packageJsonPath)) {
+      const packageJson = require(packageJsonPath);
+      return (
+        (packageJson.dependencies && packageJson.dependencies.typescript) ||
+        (packageJson.devDependencies && packageJson.devDependencies.typescript)
+      );
+    }
+
+    // Check for .ts or .tsx files in the project
+    const tsFiles = glob.sync("**/*.ts?(x)", {
+      cwd: process.cwd(),
+      ignore: ["**/node_modules/**", "**/dist/**", "**/build/**"],
+    });
+
+    return tsFiles.length > 0;
+  } catch (error) {
+    // Default to JavaScript if any error occurs
+    return false;
+  }
+}
+
+/**
+ * Create the metadata configuration file with the appropriate extension
  */
 function createMetadataFile(answers) {
-  const templatePath = path.join(TEMPLATE_DIR, `${METADATA_FILENAME}.js`);
-  const targetPath = path.join(process.cwd(), METADATA_FILENAME);
+  // Determine if we should use TypeScript
+  const useTypeScript = isTypeScriptProject();
+  const templatePath = path.join(
+    TEMPLATE_DIR,
+    `${METADATA_FILENAME_JS}.template`
+  );
+  const metadataFilename = useTypeScript
+    ? METADATA_FILENAME_TS
+    : METADATA_FILENAME_JS;
+  const targetPath = path.join(process.cwd(), metadataFilename);
 
   // Read the template
   let template = fs.readFileSync(templatePath, "utf8");
@@ -40,6 +84,63 @@ function createMetadataFile(answers) {
     .replace(/{{siteName}}/g, answers.siteName)
     .replace(/{{siteUrl}}/g, answers.siteUrl)
     .replace(/{{siteDescription}}/g, answers.siteDescription);
+
+  // Add TypeScript types if using TypeScript
+  if (useTypeScript) {
+    // Add type imports at the top of the file
+    const typeImports = `import type { Metadata } from 'next';\n\n`;
+
+    // Add types to siteConfig
+    template = template.replace(
+      "const siteConfig = {",
+      "const siteConfig: SiteConfig = {"
+    );
+
+    // Add interface for siteConfig
+    const siteConfigInterface = `
+/**
+ * Site Configuration Interface
+ */
+interface SiteConfig {
+  name: string;
+  url: string;
+  description: string;
+  twitter: {
+    handle: string;
+    site: string;
+    cardType: string;
+  };
+  openGraph: {
+    type: string;
+    locale: string;
+    siteName: string;
+  };
+  icons: {
+    icon: string;
+    apple: Array<{ url: string }>;
+  };
+  defaultImage: string;
+  keywords: string[];
+  creator: string;
+  publisher: string;
+  themeColor: string;
+  robots: {
+    index: boolean;
+    follow: boolean;
+  };
+}
+
+`;
+
+    // Add the type declarations to the template
+    template = typeImports + siteConfigInterface + template;
+
+    // Add Metadata type to the metadata object
+    template = template.replace(
+      "const metadata = {",
+      "const metadata: Metadata = {"
+    );
+  }
 
   // Write the file
   fs.writeFileSync(targetPath, template);
@@ -76,6 +177,7 @@ function findLayoutFiles() {
 
 module.exports = {
   isNextJsProject,
+  isTypeScriptProject,
   createMetadataFile,
   findLayoutFiles,
 };
