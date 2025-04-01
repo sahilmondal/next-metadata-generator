@@ -11,9 +11,19 @@
   },
   "keywords": [
     "next.js",
+    "next",
     "seo",
     "metadata",
-    "cli"
+    "cli",
+    "generator",
+    "configuration",
+    "tool",
+    "next-seo",
+    "nextjs",
+    "nextjs-metadata",
+    "nextjs-seo",
+    "nextjs-cli",
+    "nextjs-generator"
   ],
   "author": "Sahil Mondal",
   "license": "MIT",
