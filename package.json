@@ -1,6 +1,6 @@
 {
   "name": "next-seo-metadata",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A CLI tool to generate and manage Next.js metadata configurations",
   "main": "src/index.js",
   "bin": {
@@ -26,7 +26,6 @@
     "nextjs-generator",
     "next-seo-metadata"
   ],
-  "author": "Sahil Mondal",
   "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",
@@ -37,5 +36,17 @@
   },
   "engines": {
     "node": ">=14.0.0"
-  }
+  },
+  "author": {
+    "name": "Sahil Mondal",
+    "email": "development.sahil@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sahilmondal/next-seo-metadata-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sahilmondal/next-seo-metadata-generator/issues"
+  },
+  "homepage": "https://github.com/sahilmondal/next-seo-metadata-generator#readme"
 }

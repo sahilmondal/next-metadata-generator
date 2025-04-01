@@ -11,9 +11,9 @@ program
   .description("Initialize a new Next.js metadata configuration")
   .action(init);
 
-program.parse(process.argv);
-
-// If no command is provided, show help
+// If no command is provided, run init
 if (!process.argv.slice(2).length) {
-  program.outputHelp();
+  program.parse(["node", "next-seo-metadata", "init"]);
+} else {
+  program.parse(process.argv);
 }
