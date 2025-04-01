@@ -23,7 +23,8 @@
     "nextjs-metadata",
     "nextjs-seo",
     "nextjs-cli",
-    "nextjs-generator"
+    "nextjs-generator",
+    "next-seo-metadata"
   ],
   "author": "Sahil Mondal",
   "license": "MIT",
