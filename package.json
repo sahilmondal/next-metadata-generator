@@ -4,7 +4,7 @@
   "description": "A CLI tool to generate and manage Next.js metadata configurations",
   "main": "src/index.js",
   "bin": {
-    "next-metadata": "./bin/next-seo-metadata.js"
+    "next-seo-metadata": "./bin/next-seo-metadata.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
