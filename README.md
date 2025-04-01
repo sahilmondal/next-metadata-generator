@@ -14,10 +14,10 @@ A CLI tool to generate and manage Next.js metadata for better SEO.
 
 ```bash
 # Install globally
-npm install -g next-metadata
+npm install -g next-seo-metadata
 
 # OR run directly with npx
-npx next-metadata init
+npx next-seo-metadata init
 ```
 
 ## Usage
@@ -29,7 +29,7 @@ npx next-metadata init
 cd your-nextjs-project
 
 # Initialize the metadata configuration
-npx next-metadata init
+npx next-seo-metadata init
 ```
 
 This will:
